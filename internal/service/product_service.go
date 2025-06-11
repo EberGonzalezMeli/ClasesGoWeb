@@ -25,3 +25,12 @@ func SearchByPrice(priceGt float64) ([]repository.Product, error) {
 	return result, nil
 
 }
+
+func PostProduct(newProduct *repository.Product) error {
+
+	err := repository.CreateProduct(*newProduct)
+	if err != nil {
+		return fmt.Errorf("error: No se pudo crear un producto: %v", err.Error())
+	}
+	return nil
+}

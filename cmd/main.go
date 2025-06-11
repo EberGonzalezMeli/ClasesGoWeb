@@ -20,6 +20,7 @@ func main() {
 	rt.Get("/products", handler.GetProductsHandler)
 	rt.Get("/products/{id}", handler.GetProductByIDHandler)
 	rt.Get("/products/search", handler.GetSearchByPriceHandler)
+	rt.Post("/products", handler.PostProductHandler)
 
 	log.Println("Servidor escuchando en :8080")
 	http.ListenAndServe(":8080", rt)

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"strings"
+	"time"
 )
 
 type Product struct {
@@ -58,4 +60,52 @@ func SearchByPrice(priceGt float64) ([]Product, error) {
 		return result, nil
 	}
 	return nil, fmt.Errorf("error: No exite un producto con precio mayor a %v", priceGt)
+}
+
+func CreateProduct(newProduct Product) error {
+	err := ValidateDataPost(newProduct)
+	if err != nil {
+		return fmt.Errorf("%v", err.Error())
+	}
+
+	newProduct.ID = 1
+	for _, producto := range Products {
+		newProduct.ID = producto.ID + 1
+	}
+
+	Products = append(Products, newProduct)
+	return nil
+}
+func ValidateDataPost(newProduct Product) error {
+	formato := "02/01/2006" // formato dd/mm/yyyy
+
+	if newProduct.Name == "" {
+		return fmt.Errorf("nombre es requerido")
+	}
+	if newProduct.Quantity == 0 {
+		return fmt.Errorf("quantity es requerido y diferente de 0")
+	}
+	if strings.TrimSpace(newProduct.Code_value) == "" {
+		return fmt.Errorf("code_value es requerido")
+	}
+	for _, producto := range Products {
+		if newProduct.Code_value == producto.Code_value {
+			return fmt.Errorf("ya existe un Code_value con este valor")
+		}
+	}
+
+	if strings.TrimSpace(newProduct.Expiration) == "" {
+		return fmt.Errorf("expiration es requerido")
+	}
+
+	_, err := time.Parse(formato, newProduct.Expiration)
+	if err != nil {
+		return fmt.Errorf("la fecha NO tiene el formato dd/mm/yyyy")
+	}
+
+	if newProduct.Price == 0 {
+		return fmt.Errorf("price es requerido y diferente de 0")
+	}
+
+	return nil
 }
